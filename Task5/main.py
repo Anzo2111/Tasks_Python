@@ -21,13 +21,13 @@ def convert_to_bytes(zip_file):
     return bytes_content
 
 
-def create_function(function_name, iam_role, function_handler, zip_file):
+def create_function(function_name, iam_role, zip_file):
     try:
         client.create_function(
             FunctionName=function_name,
             Runtime='python3.8',
             Role=iam.get_role(RoleName=iam_role)['Role']['Arn'],
-            Handler=f'{Path(zip_file).stem}.{function_handler}',
+            Handler='lambda_function.lambda_handler',
             Code={
                 'ZipFile': convert_to_bytes(zip_file)
             },
@@ -92,14 +92,14 @@ def read_file(bucket_name, file):
         print(f"Something went wrong :( {ex}")
 
 
-def main(function_name, iam_role, function_handler, zip_file, bucket_name, file_name):
+def main(function_name, iam_role, zip_file, bucket_name, file_name):
     file = file_name
     create_bucket(bucket_name)
-    create_function(function_name, iam_role, function_handler, zip_file)
+    create_function(function_name, iam_role, zip_file)
     s3_trigger(bucket_name, function_name)
     upload_file(file_name, bucket_name, file)
     read_file(bucket_name, file)
 
 if __name__ == '__main__':
     main('lambda-function', 'LabRole',
-                    'lambda_handler', './lambda_function.zip', 'bucketname1234', 'dogs.jpeg')
+                     './lambda_function.zip', 'bucketname1234', 'dogs.jpeg')
