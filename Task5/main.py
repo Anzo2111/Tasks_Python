@@ -36,7 +36,7 @@ def create_function(function_name, iam_role, zip_file):
     except ClientError as e:
         print(e)
 
-def add_permision(function_name, bucket_name):
+def add_permission(function_name, bucket_name):
     client.add_permission(
         FunctionName=function_name,
         StatementId='1',
@@ -67,7 +67,7 @@ def s3_trigger(bucket_name, function_name):
             }
         },)
     try:
-        add_permision(function_name, bucket_name)
+        add_permission(function_name, bucket_name)
         s3.put_bucket_notification_configuration(
             Bucket=bucket_name,
             NotificationConfiguration={
